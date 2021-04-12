@@ -23,6 +23,7 @@ import {
   useBoolean,
   useToast,
 } from "@chakra-ui/react"
+import axios from "axios"
 import { clone } from "lodash"
 import moment from "moment"
 import React, { useState } from "react"
@@ -182,8 +183,8 @@ function RpcSettings({
                     lat <= 100
                       ? "green.500"
                       : lat <= 1000
-                      ? "yellow.500"
-                      : "orange.500"
+                        ? "yellow.500"
+                        : "orange.500"
                   }
                 >
                   {lat}ms
@@ -337,6 +338,7 @@ function Login() {
             <TabList>
               <Tab>邮箱登录</Tab>
               <Tab>Token 登录</Tab>
+              <Tab>Oauth登录</Tab>
             </TabList>
 
             <TabPanels>
@@ -403,6 +405,23 @@ function Login() {
                     isLoading={loginSent}
                   >
                     更新 Token
+                  </Button>
+                </Stack>
+              </TabPanel>
+              <TabPanel>
+                <Stack spacing="3">
+                  <Button
+                    mt={4}
+                    colorScheme="blue"
+                    isLoading={loginSent}
+                    onClick={() => {
+                      // window.open(`https://sjtu.closed.social/oauth/authorize?client_id=AIPY-mmjaqV3zIAI5LfYc0sRu32fCopaPWmCCYI5xXo&client_secret=i2UqYb00gwfJcqA8ZFC627xtaiQ_Koe8vgzoR0P0f90&redirect_uri=127.0.0.1&grant_type=code`)
+                      // window.open(`https://sjtu.closed.social/oauth/authorize?scope=read+write+follow+push&response_type=code&client_id=AIPY-mmjaqV3zIAI5LfYc0sRu32fCopaPWmCCYI5xXo&redirect_uri=https://main.norma.observer:4321`)
+                      window.open(`https://sjtu.closed.social/oauth/authorize?scope=read+write+follow+push&response_type=code&client_id=g15W6Gy7rY6dfXDcMnRHd7u03MEtpeCso8wUivhOa9Y&redirect_uri=http://127.0.0.1:1234/callback`)
+
+                    }}
+                  >
+                    OAuth
                   </Button>
                 </Stack>
               </TabPanel>

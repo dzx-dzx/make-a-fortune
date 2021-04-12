@@ -1,4 +1,5 @@
 import axios from "axios"
+import masto from "masto"
 import { NameTheme } from "./name_theme"
 import { useRPCState, useTokenState } from "./settings"
 

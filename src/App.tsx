@@ -1,7 +1,9 @@
-import { Box, Flex, useColorModeValue } from "@chakra-ui/react"
-import React, { Fragment } from "react"
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
+import { Box, Flex, useColorModeValue, useQuery } from "@chakra-ui/react"
+import axios from "axios"
+import React, { Fragment, useState, useEffect } from "react"
+import { BrowserRouter as Router, Route, Switch, useParams, useLocation } from "react-router-dom"
 import PhoneNavbar from "~src/components/elements/PhoneNavbar"
+import { useClient } from "./client"
 import Navbar from "./components/elements/Navbar"
 import {
   PostListCategory,
@@ -18,6 +20,37 @@ import ScrollToTop from "./components/utils/ScrollToTop"
 import Login from "./components/views/Login"
 import Settings from "./components/views/Settings"
 
+
+
+function OAuthCallback() {
+  console.log("Entering!")
+
+  let accessCode = new URLSearchParams(useLocation().search).get("code");
+  console.log(accessCode);
+  let [token, setToken] = useState<string>("");
+
+  // (async () => {
+  //   console.log("Entered!")
+  //   let token = await axios.post("https://sjtu.closed.social/oauth/token",
+  //     `client_id=g15W6Gy7rY6dfXDcMnRHd7u03MEtpeCso8wUivhOa9Y&client_secret=EfGVKKJDTrSrmYzxZkKlnzDjzUwl_E58NtBDiKf13qM&redirect_uri=http://127.0.0.1:1234/callback&grant_type=authorization_code&code=${accessCode}`
+  //   ).catch((err: any) => { console.log(err) })
+  //   setToken(token as unknown as string)
+  // })()
+
+  useEffect(() => {
+    axios.post("https://sjtu.closed.social/oauth/token",
+      `client_id=g15W6Gy7rY6dfXDcMnRHd7u03MEtpeCso8wUivhOa9Y&client_secret=EfGVKKJDTrSrmYzxZkKlnzDjzUwl_E58NtBDiKf13qM&redirect_uri=http://127.0.0.1:1234/callback&grant_type=authorization_code&code=${accessCode}`
+    ).then(res => {
+      setToken(res.data.access_token as unknown as string)
+      let client=useClient()
+      client.token=token
+    })
+      .catch((err: any) => { console.log(err) })
+  }, [])
+
+  return (<div>Token:{token}<br />
+    accessCode:{accessCode}</div>)
+}
 function App() {
   const navBgColor = useColorModeValue("gray.50", "gray.900")
   const phoneNavbarBgColor = useColorModeValue("white", "gray.800")
@@ -103,6 +136,9 @@ function App() {
               </Route>
               <Route path="/posts/:postId">
                 <ThreadList />
+              </Route>
+              <Route path="/callback">
+                <OAuthCallback />
               </Route>
             </Switch>
           </Box>
