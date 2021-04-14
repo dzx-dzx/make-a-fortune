@@ -1,5 +1,5 @@
 import axios from "axios"
-import masto from "masto"
+import * as Masto from "masto"
 import { NameTheme } from "./name_theme"
 import { useRPCState, useTokenState } from "./settings"
 
@@ -26,7 +26,7 @@ export class ActionError extends Error {
 export class Client {
   backend: string
   token?: string
-  mastoClient?: masto.FacadeRepositories
+  mastoClient?: Masto.FacadeRepositories
 
   constructor(backend: string = "/", token?: string) {
     this.backend = backend
@@ -37,10 +37,12 @@ export class Client {
   }
   async setMastoClient(token?: string) {
     this.token = token ?? this.token
-    this.mastoClient = await masto.login({
-      url: "https://sjtu.closed.social",
-      accessToken: this.token
+    this.mastoClient = await Masto.login({
+      url: "https://sjtu.closed.social/",
+      accessToken: token
     })
+    console.log(this.mastoClient)
+    return this.mastoClient
   }
   async sendRequest(body: any): Promise<any> {
     return (await axios.post(`${this.backend}api/rpc_proxy`, body)).data
@@ -96,9 +98,31 @@ export class Client {
   }
 
   async fetchPost(request: FetchPostRequest) {
-    // let mastoClient=this.mastoClient
-    // mastoClient.search()
-    // as FetchPostResponse
+    let mastoClient = this.mastoClient
+    console.log(mastoClient)
+    const statuses = await mastoClient?.accounts.getStatusesIterable("33", {})
+      .next()
+      .then(res => res.value.filter((s: any) => s?.inReplyToId == null))
+    return {
+      thread_list: statuses.map((status: any) => {
+        return {
+          ThreadID: status.id,
+          Block: 0,
+          Title: status.content,
+          Summary: "",
+          Like: status.favouritesCount,
+          Dislike: 0,
+          Comment: status.repliesCount,
+          Read: 0,
+          LastUpdateTime: status.createdAt,
+          AnonymousType: "abc",
+          PostTime: status.createdAt,
+          RandomSeed: 0,
+          WhetherTop: 0,
+          Tag: "NULL"
+        }
+      })
+    } as FetchPostResponse
   }
 
   async fetchReply(request: FetchReplyRequest) {

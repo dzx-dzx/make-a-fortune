@@ -20,31 +20,22 @@ import ScrollToTop from "./components/utils/ScrollToTop"
 import Login from "./components/views/Login"
 import Settings from "./components/views/Settings"
 
-
+import { Client, RPCVersion } from "~/src/client"
 
 function OAuthCallback() {
-  console.log("Entering!")
 
   let accessCode = new URLSearchParams(useLocation().search).get("code");
-  console.log(accessCode);
+
   let [token, setToken] = useState<string>("");
-
-  // (async () => {
-  //   console.log("Entered!")
-  //   let token = await axios.post("https://sjtu.closed.social/oauth/token",
-  //     `client_id=g15W6Gy7rY6dfXDcMnRHd7u03MEtpeCso8wUivhOa9Y&client_secret=EfGVKKJDTrSrmYzxZkKlnzDjzUwl_E58NtBDiKf13qM&redirect_uri=http://127.0.0.1:1234/callback&grant_type=authorization_code&code=${accessCode}`
-  //   ).catch((err: any) => { console.log(err) })
-  //   setToken(token as unknown as string)
-  // })()
-
+  let client = useClient()
   useEffect(() => {
     axios.post("https://sjtu.closed.social/oauth/token",
       `client_id=g15W6Gy7rY6dfXDcMnRHd7u03MEtpeCso8wUivhOa9Y&client_secret=EfGVKKJDTrSrmYzxZkKlnzDjzUwl_E58NtBDiKf13qM&redirect_uri=http://127.0.0.1:1234/callback&grant_type=authorization_code&code=${accessCode}`
     ).then(res => {
       setToken(res.data.access_token as unknown as string)
-      let client=useClient()
-      client.token=token
-      client.setMastoClient()
+
+
+      client.setMastoClient(res.data.access_token)
     })
       .catch((err: any) => { console.log(err) })
   }, [])
