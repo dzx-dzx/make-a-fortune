@@ -26,6 +26,7 @@ export class ActionError extends Error {
 export class Client {
   backend: string
   token?: string
+  mastoClient?: masto.FacadeRepositories
 
   constructor(backend: string = "/", token?: string) {
     this.backend = backend
@@ -34,7 +35,13 @@ export class Client {
     }
     this.token = token
   }
-
+  async setMastoClient(token?: string) {
+    this.token = token ?? this.token
+    this.mastoClient = await masto.login({
+      url: "https://sjtu.closed.social",
+      accessToken: this.token
+    })
+  }
   async sendRequest(body: any): Promise<any> {
     return (await axios.post(`${this.backend}api/rpc_proxy`, body)).data
   }
@@ -89,16 +96,9 @@ export class Client {
   }
 
   async fetchPost(request: FetchPostRequest) {
-    return this.checkResponse(
-      await this.sendRequest(
-        this.serialize(
-          new SerializeObject(request.postType.toString())
-            .parameter(request.lastSeen || "NULL")
-            .parameter(request.postCategory.toString())
-            .provideToken(this.token)
-        )
-      )
-    ) as FetchPostResponse
+    // let mastoClient=this.mastoClient
+    // mastoClient.search()
+    // as FetchPostResponse
   }
 
   async fetchReply(request: FetchReplyRequest) {
@@ -491,10 +491,10 @@ export interface FetchPostResponse {
 export type LastSeenField = NonNullable<
   {
     [K in keyof FetchPostResponse]: FetchPostResponse[K] extends
-      | string
-      | undefined
-      ? K
-      : never
+    | string
+    | undefined
+    ? K
+    : never
   }[keyof FetchPostResponse]
 >
 
