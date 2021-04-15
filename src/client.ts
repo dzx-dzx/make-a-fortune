@@ -98,9 +98,12 @@ export class Client {
   }
 
   async fetchPost(request: FetchPostRequest) {
-    let mastoClient = this.mastoClient
-    console.log(mastoClient)
-    const statuses = await mastoClient?.accounts.getStatusesIterable("33", {})
+    this.mastoClient = this.mastoClient ?? await Masto.login({
+      url: "https://sjtu.closed.social/",
+      accessToken: this.token
+    })
+    console.log(this.token)
+    const statuses = await this.mastoClient?.accounts.getStatusesIterable("33", {})
       .next()
       .then(res => res.value.filter((s: any) => s?.inReplyToId == null))
     return {

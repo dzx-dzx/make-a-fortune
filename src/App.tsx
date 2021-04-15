@@ -21,12 +21,12 @@ import Login from "./components/views/Login"
 import Settings from "./components/views/Settings"
 
 import { Client, RPCVersion } from "~/src/client"
+import { useTokenState } from "./settings"
 
 function OAuthCallback() {
 
   let accessCode = new URLSearchParams(useLocation().search).get("code");
-
-  let [token, setToken] = useState<string>("");
+  let [token, setToken] = useTokenState("")
   let client = useClient()
   useEffect(() => {
     axios.post("https://sjtu.closed.social/oauth/token",
