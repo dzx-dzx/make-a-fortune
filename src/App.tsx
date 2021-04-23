@@ -34,8 +34,6 @@ function OAuthCallback() {
     ).then(res => {
       setToken(res.data.access_token as unknown as string)
 
-
-      client.setMastoClient(res.data.access_token)
     })
       .catch((err: any) => { console.log(err) })
   }, [])

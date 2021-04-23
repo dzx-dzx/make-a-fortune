@@ -35,14 +35,11 @@ export class Client {
     }
     this.token = token
   }
-  async setMastoClient(token?: string) {
-    this.token = token ?? this.token
-    this.mastoClient = await Masto.login({
+  async getMastoClient(token?: string) {
+    return await Masto.login({
       url: "https://sjtu.closed.social/",
       accessToken: token
     })
-    console.log(this.mastoClient)
-    return this.mastoClient
   }
   async sendRequest(body: any): Promise<any> {
     return (await axios.post(`${this.backend}api/rpc_proxy`, body)).data
@@ -97,49 +94,60 @@ export class Client {
     )) as LoginResponse
   }
 
+  convertStatusToThread(status: Masto.Status):Thread {
+    return {
+      ThreadID: status.id,
+      Block: 0,
+      Title: status.content,
+      Summary: "",
+      Like: status.favouritesCount,
+      Dislike: 0,
+      Comment: status.repliesCount,
+      Read: 0,
+      LastUpdateTime: status.createdAt,
+      AnonymousType: "abc",
+      PostTime: status.createdAt,
+      RandomSeed: 0,
+      WhetherTop: 0,
+      Tag: "NULL"
+    } as Thread
+  }
+
   async fetchPost(request: FetchPostRequest) {
-    this.mastoClient = this.mastoClient ?? await Masto.login({
-      url: "https://sjtu.closed.social/",
-      accessToken: this.token
-    })
-    console.log(this.token)
+    this.mastoClient = await this.getMastoClient(this.token)
     const statuses = await this.mastoClient?.accounts.getStatusesIterable("33", {})
       .next()
       .then(res => res.value.filter((s: any) => s?.inReplyToId == null))
     return {
       thread_list: statuses.map((status: any) => {
-        return {
-          ThreadID: status.id,
-          Block: 0,
-          Title: status.content,
-          Summary: "",
-          Like: status.favouritesCount,
-          Dislike: 0,
-          Comment: status.repliesCount,
-          Read: 0,
-          LastUpdateTime: status.createdAt,
-          AnonymousType: "abc",
-          PostTime: status.createdAt,
-          RandomSeed: 0,
-          WhetherTop: 0,
-          Tag: "NULL"
-        }
+        return this.convertStatusToThread(status)
       })
     } as FetchPostResponse
   }
 
   async fetchReply(request: FetchReplyRequest) {
-    return this.checkResponse(
-      await this.sendRequest(
-        this.serialize(
-          new SerializeObject("2")
-            .parameter(request.postId)
-            .parameter(request.lastSeen || "NULL")
-            .parameter(request.order)
-            .provideToken(this.token)
-        )
-      )
-    ) as FetchReplyResponse | null
+    this.mastoClient = await this.getMastoClient(this.token)
+    const context: Masto.Context = await this.mastoClient.statuses.fetchContext(request.postId)
+    const floor: Floor[] = context.descendants.map((s) => {
+      return {
+        FloorID: s.id,
+        Speakername: "",
+        Replytoname: "",
+        Replytofloor: parseInt(s.inReplyToId ?? "0"),
+        Context: s.content,
+        RTime: s.createdAt,
+        Like: s.favouritesCount,
+        Dislike: 0,
+        WhetherLike: s.favourited ? 1 : 0,
+        WhetherReport: 0
+      } as Floor
+    })
+    return {
+      LastSeenFloorID: "",
+      ExistFlag: "",
+      floor_list: floor,
+      this_thread: this.convertStatusToThread(await this.mastoClient.statuses.fetch(request.postId))
+    } as FetchReplyResponse;
   }
 
   async likePost(request: ActionPostRequest) {
