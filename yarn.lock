@@ -2355,7 +2355,12 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
   integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
 
-"@types/node@*", "@types/node@^14.14.37":
+"@types/node@*":
+  version "14.14.41"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.41.tgz#d0b939d94c1d7bd53d04824af45f1139b8c45615"
+  integrity sha512-dueRKfaJL4RTtSa7bWeTK1M+VH+Gns73oCgzvYfHZywRCoPSd8EkXBL0mZ9unPTveBn+D9phZBaxuzpwjWkW0g==
+
+"@types/node@^14.14.37":
   version "14.14.37"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.37.tgz#a3dd8da4eb84a996c36e331df98d82abd76b516e"
   integrity sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==
@@ -5514,9 +5519,9 @@ map-visit@^1.0.0:
     object-visit "^1.0.0"
 
 masto@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/masto/-/masto-4.0.0.tgz#e23db6fc60d6769f917bf2de072706d069d0419f"
-  integrity sha512-KA+XqmgeCqC+JntD2QWjrm85MyjgKVx/4jZiehDwedGNQjAjbXSla1LiR8o9w4U4SJrNYZe+DxpEGYhV2TLQ2w==
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/masto/-/masto-4.0.1.tgz#f20bea403b424eb61f051e995aa4c98f885266c2"
+  integrity sha512-JiiafXfMMjL34OE3LYjRBf2BDBK9U1t2AYh8VYkGj63OQxWiDMMthdzJA4yh/v1Ql8f+QcZdoiKNQF8erAWQCg==
   dependencies:
     "@types/ws" "^7.4.0"
     axios "^0.21.1"
@@ -8134,10 +8139,15 @@ ws@^6.1.2:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^7.0.0, ws@^7.4.4:
+ws@^7.0.0:
   version "7.4.4"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.4.tgz#383bc9742cb202292c9077ceab6f6047b17f2d59"
   integrity sha512-Qm8k8ojNQIMx7S+Zp8u/uHOx7Qazv3Yv4q68MiWWWOJhiwG5W3x7iqmRtJo8xxrciZUY4vRxUTJCKuRnF28ZZw==
+
+ws@^7.4.4:
+  version "7.4.5"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.5.tgz#a484dd851e9beb6fdb420027e3885e8ce48986c1"
+  integrity sha512-xzyu3hFvomRfXKH8vOFMU3OguG6oOvhXMo3xsGy3xWExqaM2dxBbVxuD99O7m3ZUFMvvscsZDqxfgMaRr/Nr1g==
 
 xdg-basedir@^4.0.0:
   version "4.0.0"

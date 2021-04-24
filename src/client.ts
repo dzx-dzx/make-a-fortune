@@ -128,7 +128,13 @@ export class Client {
   async fetchReply(request: FetchReplyRequest) {
     this.mastoClient = await this.getMastoClient(this.token)
     const context: Masto.Context = await this.mastoClient.statuses.fetchContext(request.postId)
-    const floor: Floor[] = context.descendants.map((s) => {
+    console.log(context)
+    const floor: Floor[] = context.descendants.filter((s)=>{
+      console.log(s)
+      console.log(s.inReplyToId)
+      console.log(request.postId)
+      return s.inReplyToId===request.postId
+    }).map((s) => {
       return {
         FloorID: s.id,
         Speakername: "",
@@ -142,6 +148,7 @@ export class Client {
         WhetherReport: 0
       } as Floor
     })
+    console.log(floor)
     return {
       LastSeenFloorID: "",
       ExistFlag: "",
