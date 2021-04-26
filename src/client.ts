@@ -319,6 +319,12 @@ export class Client {
   }
 
   async replyReply(request: ReplyReplyRequest) {
+    this.mastoClient = await this.getMastoClient(this.token)
+    const res=await this.mastoClient.statuses.create({
+      status:request.content+"匿了",
+      inReplyToId:request.replyId
+    })
+    console.log(res)
     return this.checkResponse(
       await this.sendRequest(
         this.serialize(
@@ -334,6 +340,12 @@ export class Client {
   }
 
   async replyPost(request: ReplyPostRequest) {
+    this.mastoClient = await this.getMastoClient(this.token)
+    const res=await this.mastoClient.statuses.create({
+      status:request.content+"匿了",
+      inReplyToId:request.postId
+    })
+    console.log(res)
     return this.checkResponse(
       await this.sendRequest(
         this.serialize(
